@@ -74,7 +74,7 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
   const rotateCurrentPuyo = () => {
     setState((prevState) => ({
       ...prevState,
-      currentPuyoPair: rotatePuyo(prevState.currentPuyoPair, prevState.board),
+      currentPuyoPair: rotatePuyo(prevState.currentPuyoPair, prevState.fixedBoard),
     }));
   };
 

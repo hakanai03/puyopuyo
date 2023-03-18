@@ -18,6 +18,7 @@ export const KeyboardHandler: React.FC = () => {
         break;
       case "z":
         rotateCurrentPuyo();
+        break;
       case "s":
         if (
           state.gameStatus === "notStarted" ||
