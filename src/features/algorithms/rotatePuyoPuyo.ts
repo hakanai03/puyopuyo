@@ -3,53 +3,51 @@ import { Puyo } from "../../types/Puyo";
 import { PuyoPuyo } from "../../types/PuyoPuyo";
 import { isPuyoColliding } from "./isPuyoColliding";
 
+const rotateMatrix = (
+  matrix: (Puyo | undefined)[][]
+): (Puyo | undefined)[][] => {
+  // 入力マトリックスの行と列を入れ替えます
+  const transposedMatrix: (Puyo | undefined)[][] = [
+    [matrix[0][0], matrix[1][0]],
+    [matrix[0][1], matrix[1][1]],
+  ];
+
+  // 各行を逆にして回転させたマトリックスを返します
+  return transposedMatrix.map((row) => row.reverse());
+};
+
 export const rotatePuyoPuyo = (puyoPuyo: PuyoPuyo, board: Board): PuyoPuyo => {
-  const puyos = [
-    puyoPuyo.topLeft,
-    puyoPuyo.topRight,
-    puyoPuyo.bottomLeft,
-    puyoPuyo.bottomRight,
-  ].filter((puyo) => puyo !== undefined) as Puyo[];
-
-  const puyosIn2x2 = [
-    puyos.find(
-      (puyo) => puyo.x === puyoPuyo.topLeft?.x && puyo.y === puyoPuyo.topLeft.y
-    ),
-    puyos.find(
-      (puyo) =>
-        puyo.x === puyoPuyo.topRight?.x && puyo.y === puyoPuyo.topRight?.y
-    ),
-    puyos.find(
-      (puyo) =>
-        puyo.x === puyoPuyo.bottomLeft?.x && puyo.y === puyoPuyo.bottomLeft?.y
-    ),
-    puyos.find(
-      (puyo) =>
-        puyo.x === puyoPuyo.bottomRight?.x && puyo.y === puyoPuyo.bottomRight?.y
-    ),
+  const matrix: (Puyo | undefined)[][] = [
+    [puyoPuyo.topLeft, puyoPuyo.topRight],
+    [puyoPuyo.bottomLeft, puyoPuyo.bottomRight],
   ];
 
-  const rotatedPuyos = [
-    puyosIn2x2[0],
-    puyosIn2x2[1] ?? puyosIn2x2[0],
-    puyosIn2x2[2] ?? puyosIn2x2[0],
-    puyosIn2x2[3] ?? puyosIn2x2[0],
-  ];
+  const rotatedMatrix = rotateMatrix(matrix);
+
+  const offsetX = puyoPuyo.topLeft?.x ?? 0;
+  const offsetY = puyoPuyo.topLeft?.y ?? 0;
+
+  const rotatedPuyos: PuyoPuyo = {
+    topLeft: rotatedMatrix[0][0]
+      ? { ...rotatedMatrix[0][0], x: offsetX, y: offsetY }
+      : undefined,
+    topRight: rotatedMatrix[0][1]
+      ? { ...rotatedMatrix[0][1], x: offsetX + 1, y: offsetY }
+      : undefined,
+    bottomLeft: rotatedMatrix[1][0]
+      ? { ...rotatedMatrix[1][0], x: offsetX, y: offsetY + 1 }
+      : undefined,
+    bottomRight: rotatedMatrix[1][1]
+      ? { ...rotatedMatrix[1][1], x: offsetX + 1, y: offsetY + 1 }
+      : undefined,
+  };
 
   if (
-    rotatedPuyos
+    Object.values(rotatedPuyos)
       .filter((puyo) => puyo !== undefined)
       .every((puyo) => !isPuyoColliding(puyo as Puyo, board))
   ) {
-    return {
-      topLeft: rotatedPuyos[0],
-      topRight:
-        rotatedPuyos[1] === rotatedPuyos[0] ? undefined : rotatedPuyos[1],
-      bottomLeft:
-        rotatedPuyos[2] === rotatedPuyos[0] ? undefined : rotatedPuyos[2],
-      bottomRight:
-        rotatedPuyos[3] === rotatedPuyos[0] ? undefined : rotatedPuyos[3],
-    };
+    return rotatedPuyos;
   }
 
   return puyoPuyo;

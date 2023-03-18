@@ -91,8 +91,6 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
     });
   }, [setState]);
 
-  console.log(state.fixedBoard)
-
   const updateBoardOnCollision = () => {
     setState((prevState) => {
       const newPuyoPuyo = movePuyoPuyo(
