@@ -10,10 +10,12 @@ import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { GameState } from "../../types/GameState";
 import { Puyo } from "../../types/Puyo";
 import {
+  cloneBoard,
   Direction,
   dropPuyosOnBoard,
   makePuyoPuyo,
   movePuyoPuyo,
+  removeConnectedPuyos,
   rotatePuyoPuyo,
 } from "../algorithms";
 
@@ -85,7 +87,7 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
     setState((prevState) => {
       const newPuyoPuyo = rotatePuyoPuyo(
         prevState.currentPuyoPuyo,
-        prevState.fixedBoard,
+        prevState.fixedBoard
       );
       return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
     });
@@ -99,7 +101,6 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
         "down"
       );
 
-      // 衝突が発生した場合、ボードを更新し、新しいぷよペアを生成
       if (newPuyoPuyo === prevState.currentPuyoPuyo) {
         const newBoard = prevState.fixedBoard.map((row) => [...row]);
 
@@ -109,20 +110,31 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
           newPuyoPuyo.bottomLeft,
           newPuyoPuyo.bottomRight,
         ]
-          .filter((puyo) => puyo !== undefined)
+          .filter((puyo) => !puyo.isPlaceholder)
           .forEach((puyo) => {
             const p = puyo as Puyo;
             newBoard[p.y][p.x] = puyo;
           });
 
         const droppedBoard = dropPuyosOnBoard(newBoard);
+        const { updatedBoard, removedPuyos } =
+          removeConnectedPuyos(droppedBoard);
 
-        return {
-          ...prevState,
-          fixedBoard: droppedBoard,
-          currentPuyoPuyo: prevState.nextPuyoPuyo,
-          nextPuyoPuyo: makePuyoPuyo(),
-        };
+        if (removedPuyos) {
+          return {
+            ...prevState,
+            fixedBoard: updatedBoard,
+            chainStep: "drop",
+          };
+        } else {
+          return {
+            ...prevState,
+            fixedBoard: droppedBoard,
+            currentPuyoPuyo: prevState.nextPuyoPuyo,
+            nextPuyoPuyo: makePuyoPuyo(),
+            chainStep: "none",
+          };
+        }
       }
 
       return {

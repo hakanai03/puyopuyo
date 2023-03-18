@@ -3,6 +3,11 @@ import { Board } from "../../types/Board";
 import { Puyo } from "../../types/Puyo";
 
 export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
+  // isPlaceholderがtrueの場合、衝突しないと判断
+  if (puyo.isPlaceholder) {
+    return false;
+  }
+
   // 座標がボードの範囲外であるかどうかを確認
   if (
     puyo.x < 0 ||
@@ -21,3 +26,4 @@ export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
 
   return false;
 };
+

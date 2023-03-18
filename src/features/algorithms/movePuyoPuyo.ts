@@ -25,8 +25,7 @@ export const movePuyoPuyo = (
       break;
   }
 
-  const movePuyo = (puyo?: Puyo): Puyo | undefined => {
-    if (!puyo) return undefined;
+  const movePuyo = (puyo: Puyo): Puyo => {
     const newX = puyo.x + dx;
     const newY = puyo.y + dy;
     return { ...puyo, x: newX, y: newY };
@@ -37,12 +36,7 @@ export const movePuyoPuyo = (
   const newBottomLeft = movePuyo(puyoPuyo.bottomLeft);
   const newBottomRight = movePuyo(puyoPuyo.bottomRight);
 
-  const newPuyos = [
-    newTopLeft,
-    newTopRight,
-    newBottomLeft,
-    newBottomRight,
-  ].filter((puyo) => puyo !== undefined) as Puyo[];
+  const newPuyos = [newTopLeft, newTopRight, newBottomLeft, newBottomRight];
 
   if (newPuyos.every((newPuyo) => !isPuyoColliding(newPuyo, board))) {
     return {

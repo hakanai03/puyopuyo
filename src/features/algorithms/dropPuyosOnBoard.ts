@@ -1,21 +1,23 @@
-import {Board} from "../../types/Board";
+import { Board } from "../../types/Board";
+import { cloneBoard } from "./cloneBoard";
 
 export const dropPuyosOnBoard = (board: Board): Board => {
-  let updatedBoard = board.map((row) => [...row]);
-  let hasPuyosDropped = false;
+  let newBoard = cloneBoard(board);
+  let didPuyosDrop = true;
 
-  for (let y = updatedBoard.length - 1; y >= 0; y--) {
-    for (let x = 0; x < updatedBoard[0].length; x++) {
-      const puyo = updatedBoard[y][x];
-
-      if (puyo && y < updatedBoard.length - 1 && !updatedBoard[y + 1][x]) {
-        updatedBoard[y][x] = null;
-        updatedBoard[y + 1][x] = puyo;
-        hasPuyosDropped = true;
+  while (didPuyosDrop) {
+    didPuyosDrop = false;
+    for (let y = newBoard.length - 2; y >= 0; y--) {
+      for (let x = 0; x < newBoard[y].length; x++) {
+        const puyo = newBoard[y][x];
+        if (puyo && !newBoard[y + 1][x]) {
+          newBoard[y + 1][x] = puyo;
+          newBoard[y][x] = undefined;
+          didPuyosDrop = true;
+        }
       }
     }
   }
 
-  return hasPuyosDropped ? dropPuyosOnBoard(updatedBoard) : updatedBoard;
+  return newBoard;
 };
-

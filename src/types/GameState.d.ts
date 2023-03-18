@@ -7,4 +7,5 @@ export interface GameState {
   currentPuyoPuyo: PuyoPuyo; // 現在落下中のぷよ
   nextPuyoPuyo: PuyoPuyo; // 次に落下予定のぷよ
   gameStatus: GameStatus;
+  chainStep: "none" | "drop" | "remove";
 }

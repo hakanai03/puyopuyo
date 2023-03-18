@@ -15,13 +15,29 @@ const renderCell = (
     return puyo.x === x && puyo.y === y;
   };
 
-  if (currentPuyoPuyo.topLeft && puyoAt(currentPuyoPuyo.topLeft))
+  if (
+    currentPuyoPuyo.topLeft &&
+    puyoAt(currentPuyoPuyo.topLeft) &&
+    !currentPuyoPuyo.topLeft.isPlaceholder
+  )
     return currentPuyoPuyo.topLeft.color;
-  if (currentPuyoPuyo.topRight && puyoAt(currentPuyoPuyo.topRight))
+  if (
+    currentPuyoPuyo.topRight &&
+    puyoAt(currentPuyoPuyo.topRight) &&
+    !currentPuyoPuyo.topRight.isPlaceholder
+  )
     return currentPuyoPuyo.topRight.color;
-  if (currentPuyoPuyo.bottomLeft && puyoAt(currentPuyoPuyo.bottomLeft))
+  if (
+    currentPuyoPuyo.bottomLeft &&
+    puyoAt(currentPuyoPuyo.bottomLeft) &&
+    !currentPuyoPuyo.bottomLeft.isPlaceholder
+  )
     return currentPuyoPuyo.bottomLeft.color;
-  if (currentPuyoPuyo.bottomRight && puyoAt(currentPuyoPuyo.bottomRight))
+  if (
+    currentPuyoPuyo.bottomRight &&
+    puyoAt(currentPuyoPuyo.bottomRight) &&
+    !currentPuyoPuyo.bottomRight.isPlaceholder
+  )
     return currentPuyoPuyo.bottomRight.color;
 
   const puyo = fixedBoard[y][x];
@@ -47,6 +63,7 @@ export const GameBoard: React.FC = () => {
     borderRadius: "50%",
   };
 
+  console.log(state.fixedBoard);
   return (
     <div style={containerStyle}>
       {state.fixedBoard.map((_, rowIndex) =>
