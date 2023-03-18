@@ -9,11 +9,12 @@ const renderCell = (
   fixedBoard: Board,
   currentPuyoPair: PuyoPair
 ): string => {
-  if (
-    (currentPuyoPair.main.x === x && currentPuyoPair.main.y === y) ||
-    (currentPuyoPair.sub.x === x && currentPuyoPair.sub.y === y)
-  ) {
-    return "red";
+  if (currentPuyoPair.main.x === x && currentPuyoPair.main.y === y) {
+    return currentPuyoPair.main.color;
+  }
+
+  if (currentPuyoPair.sub.x === x && currentPuyoPair.sub.y === y) {
+    return currentPuyoPair.sub.color;
   }
 
   const puyo = fixedBoard[y][x];

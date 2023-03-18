@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useGameStateContext } from "../features/providers/GameStateProvider";
 import { GameBoard } from "../features/ui/board/GameBoard";
 import { KeyboardHandler } from "../features/ui/inputs/keyboardHandler";
+import { Instructions } from "../features/ui/instructions/Instructions";
 import { GameStatus } from "../features/ui/status/GameStatus";
 
 export const PuyoPuyoGame: React.FC = () => {
@@ -24,6 +25,7 @@ export const PuyoPuyoGame: React.FC = () => {
       <GameStatus />
       <KeyboardHandler />
       <GameBoard />
+      <Instructions />
     </>
   );
 };

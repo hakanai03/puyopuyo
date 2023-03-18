@@ -1,8 +1,13 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { GameState } from "../../types/GameState";
-import { Direction, movePuyo, rotatePuyo } from "../algorithms";
-import { makePuyoPair } from "../algorithms/makePuyo";
+import {
+  Direction,
+  dropPuyosOnBoard,
+  makePuyoPair,
+  movePuyo,
+  rotatePuyo,
+} from "../algorithms";
 
 interface GameStateContextValue {
   state: GameState;
@@ -73,7 +78,6 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
     }));
   };
 
-  // useGameStateProvider.tsx
   const updateBoardOnCollision = () => {
     setState((prevState) => {
       const newPuyoPair = movePuyo(
@@ -91,9 +95,12 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
         newBoard[prevState.currentPuyoPair.sub.y][
           prevState.currentPuyoPair.sub.x
         ] = prevState.currentPuyoPair.sub;
+
+        const droppedBoard = dropPuyosOnBoard(newBoard);
+
         return {
           ...prevState,
-          fixedBoard: newBoard,
+          fixedBoard: droppedBoard,
           currentPuyoPair: prevState.nextPuyoPair,
           nextPuyoPair: makePuyoPair(),
         };
