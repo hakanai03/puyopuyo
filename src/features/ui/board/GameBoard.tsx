@@ -8,7 +8,8 @@ const renderCell = (
   x: number,
   y: number,
   fixedBoard: Board,
-  currentPuyoPuyo: PuyoPuyo
+  currentPuyoPuyo: PuyoPuyo,
+  chainStep: "none" | "drop" | "remove"
 ): string => {
   const puyoAt = (puyo?: Puyo): boolean => {
     if (!puyo) return false;
@@ -16,24 +17,28 @@ const renderCell = (
   };
 
   if (
+    chainStep === "none" &&
     currentPuyoPuyo.topLeft &&
     puyoAt(currentPuyoPuyo.topLeft) &&
     !currentPuyoPuyo.topLeft.isPlaceholder
   )
     return currentPuyoPuyo.topLeft.color;
   if (
+    chainStep === "none" &&
     currentPuyoPuyo.topRight &&
     puyoAt(currentPuyoPuyo.topRight) &&
     !currentPuyoPuyo.topRight.isPlaceholder
   )
     return currentPuyoPuyo.topRight.color;
   if (
+    chainStep === "none" &&
     currentPuyoPuyo.bottomLeft &&
     puyoAt(currentPuyoPuyo.bottomLeft) &&
     !currentPuyoPuyo.bottomLeft.isPlaceholder
   )
     return currentPuyoPuyo.bottomLeft.color;
   if (
+    chainStep === "none" &&
     currentPuyoPuyo.bottomRight &&
     puyoAt(currentPuyoPuyo.bottomRight) &&
     !currentPuyoPuyo.bottomRight.isPlaceholder
@@ -75,7 +80,8 @@ export const GameBoard: React.FC = () => {
                 colIndex,
                 rowIndex,
                 state.fixedBoard,
-                state.currentPuyoPuyo
+                state.currentPuyoPuyo,
+                state.chainStep
               ),
             }}
           ></div>
