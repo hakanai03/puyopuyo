@@ -3,13 +3,21 @@ import { Board } from "../../types/Board";
 import { Puyo } from "../../types/Puyo";
 
 export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
-  const { x, y } = puyo;
-
-  // Puyoがボードの外側にある場合は衝突
-  if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT) {
+  // 座標がボードの範囲外であるかどうかを確認
+  if (
+    puyo.x < 0 ||
+    puyo.x >= BOARD_WIDTH ||
+    puyo.y < 0 ||
+    puyo.y >= BOARD_HEIGHT
+  ) {
     return true;
   }
 
-  // Puyoが他のPuyoと重なる場合は衝突
-  return board[y][x] !== null;
+  // 他のぷよとの衝突を確認
+  const cell = board[puyo.y][puyo.x];
+  if (cell) {
+    return true;
+  }
+
+  return false;
 };

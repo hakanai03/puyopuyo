@@ -1,21 +1,28 @@
 import React from "react";
 import { Board } from "../../../types/Board";
-import { PuyoPair } from "../../../types/PuyoPair";
+import { Puyo } from "../../../types/Puyo";
+import { PuyoPuyo } from "../../../types/PuyoPuyo";
 import { useGameStateContext } from "../../providers/GameStateProvider";
 
 const renderCell = (
   x: number,
   y: number,
   fixedBoard: Board,
-  currentPuyoPair: PuyoPair
+  currentPuyoPuyo: PuyoPuyo
 ): string => {
-  if (currentPuyoPair.main.x === x && currentPuyoPair.main.y === y) {
-    return currentPuyoPair.main.color;
-  }
+  const puyoAt = (puyo?: Puyo): boolean => {
+    if (!puyo) return false;
+    return puyo.x === x && puyo.y === y;
+  };
 
-  if (currentPuyoPair.sub.x === x && currentPuyoPair.sub.y === y) {
-    return currentPuyoPair.sub.color;
-  }
+  if (currentPuyoPuyo.topLeft && puyoAt(currentPuyoPuyo.topLeft))
+    return currentPuyoPuyo.topLeft.color;
+  if (currentPuyoPuyo.topRight && puyoAt(currentPuyoPuyo.topRight))
+    return currentPuyoPuyo.topRight.color;
+  if (currentPuyoPuyo.bottomLeft && puyoAt(currentPuyoPuyo.bottomLeft))
+    return currentPuyoPuyo.bottomLeft.color;
+  if (currentPuyoPuyo.bottomRight && puyoAt(currentPuyoPuyo.bottomRight))
+    return currentPuyoPuyo.bottomRight.color;
 
   const puyo = fixedBoard[y][x];
   return puyo ? puyo.color : "white";
@@ -26,8 +33,8 @@ export const GameBoard: React.FC = () => {
 
   const containerStyle: React.CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${state.board[0].length}, 1fr)`,
-    gridTemplateRows: `repeat(${state.board.length}, 1fr)`,
+    gridTemplateColumns: `repeat(${state.fixedBoard[0].length}, 1fr)`,
+    gridTemplateRows: `repeat(${state.fixedBoard.length}, 1fr)`,
     gridGap: "2px",
     width: "50%",
     outline: "none",
@@ -42,8 +49,8 @@ export const GameBoard: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      {state.board.map((_, rowIndex) =>
-        state.board[rowIndex].map((_, colIndex) => (
+      {state.fixedBoard.map((_, rowIndex) =>
+        state.fixedBoard[rowIndex].map((_, colIndex) => (
           <div
             key={`${rowIndex}-${colIndex}`}
             style={{
@@ -52,7 +59,7 @@ export const GameBoard: React.FC = () => {
                 colIndex,
                 rowIndex,
                 state.fixedBoard,
-                state.currentPuyoPair
+                state.currentPuyoPuyo
               ),
             }}
           ></div>

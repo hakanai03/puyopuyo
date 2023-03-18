@@ -1,12 +1,20 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { GameState } from "../../types/GameState";
+import { Puyo } from "../../types/Puyo";
 import {
   Direction,
   dropPuyosOnBoard,
-  makePuyoPair,
-  movePuyo,
-  rotatePuyo,
+  makePuyoPuyo,
+  movePuyoPuyo,
+  rotatePuyoPuyo,
 } from "../algorithms";
 
 interface GameStateContextValue {
@@ -35,12 +43,11 @@ export const useGameStateContext = () => {
 };
 
 const initialGameState: GameState = {
-  board: Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(0)),
   fixedBoard: Array.from({ length: BOARD_HEIGHT }, () =>
     Array(BOARD_WIDTH).fill(null)
   ),
-  currentPuyoPair: makePuyoPair(),
-  nextPuyoPair: makePuyoPair(),
+  currentPuyoPuyo: makePuyoPuyo(),
+  nextPuyoPuyo: makePuyoPuyo(),
   gameStatus: "notStarted",
 };
 
@@ -60,58 +67,84 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
     setState(initialGameState);
   };
 
-  const moveCurrentPuyo = (direction: Direction) => {
-    setState((prevState) => ({
-      ...prevState,
-      currentPuyoPair: movePuyo(
-        prevState.currentPuyoPair,
-        prevState.fixedBoard,
-        direction
-      ),
-    }));
-  };
+  const moveCurrentPuyo = useCallback(
+    (direction: Direction) => {
+      setState((prevState) => {
+        const newPuyoPuyo = movePuyoPuyo(
+          prevState.currentPuyoPuyo,
+          prevState.fixedBoard,
+          direction
+        );
+        return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
+      });
+    },
+    [setState]
+  );
 
-  const rotateCurrentPuyo = () => {
-    setState((prevState) => ({
-      ...prevState,
-      currentPuyoPair: rotatePuyo(prevState.currentPuyoPair, prevState.fixedBoard),
-    }));
-  };
+  const rotateCurrentPuyo = useCallback(() => {
+    setState((prevState) => {
+      const newPuyoPuyo = rotatePuyoPuyo(
+        prevState.currentPuyoPuyo,
+        prevState.fixedBoard,
+      );
+      return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
+    });
+  }, [setState]);
+
+  console.log(state.fixedBoard)
 
   const updateBoardOnCollision = () => {
     setState((prevState) => {
-      const newPuyoPair = movePuyo(
-        prevState.currentPuyoPair,
+      const newPuyoPuyo = movePuyoPuyo(
+        prevState.currentPuyoPuyo,
         prevState.fixedBoard,
         "down"
       );
 
       // 衝突が発生した場合、ボードを更新し、新しいぷよペアを生成
-      if (newPuyoPair === prevState.currentPuyoPair) {
+      if (newPuyoPuyo === prevState.currentPuyoPuyo) {
         const newBoard = prevState.fixedBoard.map((row) => [...row]);
-        newBoard[prevState.currentPuyoPair.main.y][
-          prevState.currentPuyoPair.main.x
-        ] = prevState.currentPuyoPair.main;
-        newBoard[prevState.currentPuyoPair.sub.y][
-          prevState.currentPuyoPair.sub.x
-        ] = prevState.currentPuyoPair.sub;
+
+        [
+          newPuyoPuyo.topLeft,
+          newPuyoPuyo.topRight,
+          newPuyoPuyo.bottomLeft,
+          newPuyoPuyo.bottomRight,
+        ]
+          .filter((puyo) => puyo !== undefined)
+          .forEach((puyo) => {
+            const p = puyo as Puyo;
+            newBoard[p.y][p.x] = puyo;
+          });
 
         const droppedBoard = dropPuyosOnBoard(newBoard);
 
         return {
           ...prevState,
           fixedBoard: droppedBoard,
-          currentPuyoPair: prevState.nextPuyoPair,
-          nextPuyoPair: makePuyoPair(),
+          currentPuyoPuyo: prevState.nextPuyoPuyo,
+          nextPuyoPuyo: makePuyoPuyo(),
         };
       }
 
       return {
         ...prevState,
-        currentPuyoPair: newPuyoPair,
+        currentPuyoPuyo: newPuyoPuyo,
       };
     });
   };
+
+  useEffect(() => {
+    if (state.gameStatus === "running") {
+      const intervalId = setInterval(() => {
+        updateBoardOnCollision();
+      }, 1000);
+
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [state.gameStatus, setState]);
 
   return (
     <GameStateContext.Provider
