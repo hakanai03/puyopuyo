@@ -8,4 +8,5 @@ export interface GameState {
   nextPuyoPuyo: PuyoPuyo; // 次に落下予定のぷよ
   gameStatus: GameStatus;
   chainStep: "none" | "drop" | "remove";
+  level: number
 }

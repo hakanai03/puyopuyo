@@ -19,9 +19,11 @@ const createPuyo = (
   };
 };
 
-export const makePuyoPuyo = (): PuyoPuyo => {
-  const color1 = colors[Math.floor(Math.random() * colors.length)];
-  const color2 = colors[Math.floor(Math.random() * colors.length)];
+export const makePuyoPuyo = (level: number): PuyoPuyo => {
+  const availableColors = colors.slice(0, level + 2);
+
+  const color1 = availableColors[Math.floor(Math.random() * availableColors.length)];
+  const color2 = availableColors[Math.floor(Math.random() * availableColors.length)];
 
   const shapeIndex = Math.floor(Math.random() * 5);
 

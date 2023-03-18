@@ -63,7 +63,6 @@ export const GameBoard: React.FC = () => {
     borderRadius: "50%",
   };
 
-  console.log(state.fixedBoard);
   return (
     <div style={containerStyle}>
       {state.fixedBoard.map((_, rowIndex) =>
