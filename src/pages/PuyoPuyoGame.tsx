@@ -12,6 +12,7 @@ export const PuyoPuyoGame: React.FC = () => {
   const containerStyle: React.CSSProperties = {
     display: "flex",
     width: "100%",
+    maxWidth: "350px",
   };
 
   const leftContainerStyle: React.CSSProperties = {

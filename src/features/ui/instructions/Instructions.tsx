@@ -4,7 +4,7 @@ export const Instructions: React.FC = () => {
   const instructionsStyle: React.CSSProperties = {
     textAlign: "center",
     marginTop: "20px",
-    fontSize: "1.2em",
+    fontSize: "1rem",
   };
 
   return (
