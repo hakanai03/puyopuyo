@@ -41,7 +41,7 @@ const handleNoneStep = (
       .filter((puyo) => !puyo.isPlaceholder)
       .forEach((puyo) => {
         const p = puyo as Puyo;
-        clearedBoard[p.y][p.x] = undefined;
+        clearedBoard[p.y][p.x] = null;
       });
 
     return {

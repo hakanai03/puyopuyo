@@ -12,7 +12,7 @@ export const dropPuyosOnBoard = (board: Board): Board => {
         const puyo = newBoard[y][x];
         if (puyo && !newBoard[y + 1][x]) {
           newBoard[y + 1][x] = puyo;
-          newBoard[y][x] = undefined;
+          newBoard[y][x] = null;
           didPuyosDrop = true;
         }
       }

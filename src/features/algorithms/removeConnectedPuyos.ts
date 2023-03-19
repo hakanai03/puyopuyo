@@ -1,15 +1,21 @@
 import { Board } from "../../types/Board";
-import {GameConfig} from "../../types/GameConfig";
+import { GameConfig } from "../../types/GameConfig";
 
 type Coord = { x: number; y: number };
 
-const getConnectedPuyos = (x: number, y: number, board: Board, config: GameConfig): Coord[] => {
+const getConnectedPuyos = (
+  x: number,
+  y: number,
+  board: Board,
+  config: GameConfig
+): Coord[] => {
   const visited: boolean[][] = Array.from({ length: config.boardHeight }, () =>
     Array.from({ length: config.boardWidth }, () => false)
   );
 
   const dfs = (x: number, y: number): Coord[] => {
-    if (x < 0 || x >= config.boardWidth || y < 0 || y >= config.boardHeight) return [];
+    if (x < 0 || x >= config.boardWidth || y < 0 || y >= config.boardHeight)
+      return [];
 
     if (visited[y][x]) return [];
 
@@ -50,7 +56,12 @@ const getConnectedPuyos = (x: number, y: number, board: Board, config: GameConfi
   return dfs(x, y);
 };
 
-const isPuyoConnected = (x: number, y: number, board: Board, config: GameConfig): boolean => {
+const isPuyoConnected = (
+  x: number,
+  y: number,
+  board: Board,
+  config: GameConfig
+): boolean => {
   const connectedPuyos = getConnectedPuyos(x, y, board, config);
   return connectedPuyos.length >= 4;
 };
@@ -69,7 +80,7 @@ export const removeConnectedPuyos = (
       if (connectedPuyos.length >= 4) {
         removedPuyos = true;
         connectedPuyos.forEach((coord) => {
-          newBoard[coord.y][coord.x] = undefined;
+          newBoard[coord.y][coord.x] = null;
         });
       }
     }
