@@ -68,6 +68,7 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
         gameStatus: "notStarted",
         chainStep: "none",
         level: 1,
+        score: 0,
       } as GameState),
     []
   );

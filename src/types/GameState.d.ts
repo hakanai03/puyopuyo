@@ -9,4 +9,5 @@ export interface GameState {
   gameStatus: GameStatus;
   chainStep: "none" | "drop" | "remove";
   level: number
+  score: number
 }
