@@ -8,6 +8,7 @@ export const GameStatus: React.FC = () => {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: "10px",
     borderRadius: "5px",
+    wordBreak: "break-all",
   };
 
   return (
