@@ -1,6 +1,7 @@
 import { GameConfig } from "../../types/GameConfig";
 import { GameState } from "../../types/GameState";
 import { Puyo } from "../../types/Puyo";
+import { isGameOver } from "./isGameOver";
 import { movePuyoPuyo } from "./movePuyoPuyo";
 
 const handleNoneStep = (
@@ -28,6 +29,15 @@ const handleNoneStep = (
         const p = puyo as Puyo;
         newBoard[p.y][p.x] = puyo;
       });
+
+    // ゲームオーバー条件をチェック
+    if (isGameOver(newBoard, config)) {
+      return {
+        ...prevState,
+        fixedBoard: newBoard,
+        gameStatus: "gameOver",
+      };
+    }
 
     return { ...prevState, fixedBoard: newBoard, chainStep: "drop" };
   } else {

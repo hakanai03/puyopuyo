@@ -13,6 +13,7 @@ import { GameState } from "../../types/GameState";
 import {
   changePuyoPuyoColor,
   Direction,
+  isGameOver,
   isPuyoPuyoSquareShape,
   makePuyoPuyo,
   movePuyoPuyo,

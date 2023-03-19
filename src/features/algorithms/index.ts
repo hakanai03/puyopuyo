@@ -10,3 +10,4 @@ export * from "./updateFixedPuyo";
 export * from "./getAvailableColors";
 export * from "./isPuyoPuyoSquareShape";
 export * from "./changePuyoPuyoColor";
+export * from "./isGameOver"
