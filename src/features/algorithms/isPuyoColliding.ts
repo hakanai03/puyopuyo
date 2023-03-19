@@ -1,8 +1,12 @@
-import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { Board } from "../../types/Board";
+import { GameConfig } from "../../types/GameConfig";
 import { Puyo } from "../../types/Puyo";
 
-export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
+export const isPuyoColliding = (
+  puyo: Puyo,
+  board: Board,
+  config: GameConfig
+): boolean => {
   // isPlaceholderがtrueの場合、衝突しないと判断
   if (puyo.isPlaceholder) {
     return false;
@@ -11,9 +15,9 @@ export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
   // 座標がボードの範囲外であるかどうかを確認
   if (
     puyo.x < 0 ||
-    puyo.x >= BOARD_WIDTH ||
+    puyo.x >= config.boardWidth ||
     puyo.y < 0 ||
-    puyo.y >= BOARD_HEIGHT
+    puyo.y >= config.boardHeight
   ) {
     return true;
   }
@@ -26,4 +30,3 @@ export const isPuyoColliding = (puyo: Puyo, board: Board): boolean => {
 
   return false;
 };
-

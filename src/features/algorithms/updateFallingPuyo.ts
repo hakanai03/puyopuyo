@@ -1,12 +1,17 @@
-import {GameState} from "../../types/GameState";
-import {Puyo} from "../../types/Puyo";
-import {movePuyoPuyo} from "./movePuyoPuyo";
+import { GameConfig } from "../../types/GameConfig";
+import { GameState } from "../../types/GameState";
+import { Puyo } from "../../types/Puyo";
+import { movePuyoPuyo } from "./movePuyoPuyo";
 
-const handleNoneStep = (prevState: GameState): GameState => {
+const handleNoneStep = (
+  prevState: GameState,
+  config: GameConfig
+): GameState => {
   const newPuyoPuyo = movePuyoPuyo(
     prevState.currentPuyoPuyo,
     prevState.fixedBoard,
-    "down"
+    "down",
+    config
   );
 
   if (newPuyoPuyo === prevState.currentPuyoPuyo) {
@@ -47,10 +52,12 @@ const handleNoneStep = (prevState: GameState): GameState => {
   }
 };
 
-export const updateFallingPuyo = (prevState: GameState): GameState => {
+export const updateFallingPuyo = (
+  prevState: GameState,
+  config: GameConfig
+): GameState => {
   if (prevState.chainStep === "none") {
-    return handleNoneStep(prevState);
+    return handleNoneStep(prevState, config);
   }
   return prevState;
 };
-;

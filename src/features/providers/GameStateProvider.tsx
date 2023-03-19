@@ -4,9 +4,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
+import { Board } from "../../types/Board";
+import { GameConfig } from "../../types/GameConfig";
 import { GameState } from "../../types/GameState";
 import {
   changePuyoPuyoColor,
@@ -18,6 +20,7 @@ import {
   updateFallingPuyo,
   updateFixedPuyos,
 } from "../algorithms";
+import { useGameConfig } from "./GameConfigProvider";
 
 const fallingPuyoInterval = 1000;
 const fixedPuyosInterval = 500;
@@ -46,22 +49,29 @@ export const useGameStateContext = () => {
   return context;
 };
 
-const initialGameState: GameState = {
-  fixedBoard: Array.from({ length: BOARD_HEIGHT }, () =>
-    Array(BOARD_WIDTH).fill(null)
-  ),
-  currentPuyoPuyo: makePuyoPuyo(1),
-  nextPuyoPuyo: makePuyoPuyo(1),
-  gameStatus: "notStarted",
-  chainStep: "none",
-  level: 1,
+const makeBoard = (config: GameConfig): Board => {
+  return Array.from({ length: config.boardHeight }, () =>
+    Array(config.boardWidth).fill(null)
+  );
 };
 
 export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
   children,
 }) => {
+  const { config } = useGameConfig();
+  const initialGameState = useMemo(
+    () =>
+      ({
+        fixedBoard: makeBoard(config),
+        currentPuyoPuyo: makePuyoPuyo(config),
+        nextPuyoPuyo: makePuyoPuyo(config),
+        gameStatus: "notStarted",
+        chainStep: "none",
+        level: 1,
+      } as GameState),
+    []
+  );
   const [state, setState] = useState<GameState>(initialGameState);
-
   const startGame = () => {
     setState((prevState) => ({
       ...prevState,
@@ -79,7 +89,8 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
         const newPuyoPuyo = movePuyoPuyo(
           prevState.currentPuyoPuyo,
           prevState.fixedBoard,
-          direction
+          direction,
+          config
         );
         return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
       });
@@ -99,7 +110,8 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
 
       const newPuyoPuyo = rotatePuyoPuyo(
         prevState.currentPuyoPuyo,
-        prevState.fixedBoard
+        prevState.fixedBoard,
+        config
       );
       return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
     });
@@ -108,11 +120,11 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
   useEffect(() => {
     if (state.gameStatus === "running") {
       const updateFallingPuyoTimer = setInterval(() => {
-        setState((prevState) => updateFallingPuyo(prevState));
+        setState((prevState) => updateFallingPuyo(prevState, config));
       }, fallingPuyoInterval);
 
       const updateFixedPuyosTimer = setInterval(() => {
-        setState((prevState) => updateFixedPuyos(prevState));
+        setState((prevState) => updateFixedPuyos(prevState, config));
       }, fixedPuyosInterval);
 
       return () => {

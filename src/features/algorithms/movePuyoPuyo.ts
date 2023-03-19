@@ -1,4 +1,5 @@
 import { Board } from "../../types/Board";
+import {GameConfig} from "../../types/GameConfig";
 import { Puyo } from "../../types/Puyo";
 import { PuyoPuyo } from "../../types/PuyoPuyo";
 import { isPuyoColliding } from "./isPuyoColliding";
@@ -8,7 +9,8 @@ export type Direction = "left" | "right" | "down";
 export const movePuyoPuyo = (
   puyoPuyo: PuyoPuyo,
   board: Board,
-  direction: Direction
+  direction: Direction,
+  config: GameConfig
 ): PuyoPuyo => {
   let dx = 0;
   let dy = 0;
@@ -38,7 +40,7 @@ export const movePuyoPuyo = (
 
   const newPuyos = [newTopLeft, newTopRight, newBottomLeft, newBottomRight];
 
-  if (newPuyos.every((newPuyo) => !isPuyoColliding(newPuyo, board))) {
+  if (newPuyos.every((newPuyo) => !isPuyoColliding(newPuyo, board, config))) {
     return {
       topLeft: newTopLeft,
       topRight: newTopRight,
