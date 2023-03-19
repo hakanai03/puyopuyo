@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Board } from "../../../types/Board";
 import { useGameConfig } from "../../providers/GameConfigProvider";
 import { useGameStateContext } from "../../providers/GameStateProvider";
+import { useResizeObserver } from "../../utils/useResizeObserver";
 import { Puyo } from "./Puyo";
 
 const renderFixedPuyo = (
@@ -18,21 +19,15 @@ export const GameBoard: React.FC = () => {
   const { state } = useGameStateContext();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.clientWidth;
-        containerRef.current.style.height = `${
-          (width / state.fixedBoard[0].length) * state.fixedBoard.length
-        }px`;
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [state.fixedBoard]);
+  const onResize = (width: number, height: number) => {
+    if (containerRef.current) {
+      containerRef.current.style.height = `${
+        (width / state.fixedBoard[0].length) * state.fixedBoard.length
+      }px`;
+    }
+  };
+
+  useResizeObserver(containerRef, onResize);
 
   const containerStyle: React.CSSProperties = {
     display: "grid",
@@ -44,8 +39,6 @@ export const GameBoard: React.FC = () => {
   };
 
   const gridSize = state.fixedBoard[0].length;
-
-  console.log(state.fixedBoard);
 
   return (
     <div ref={containerRef} style={containerStyle}>
