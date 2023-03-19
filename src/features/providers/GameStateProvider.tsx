@@ -13,8 +13,12 @@ import {
   makePuyoPuyo,
   movePuyoPuyo,
   rotatePuyoPuyo,
-  updateBoardOnCollision,
+  updateFallingPuyo,
+  updateFixedPuyos,
 } from "../algorithms";
+
+const fallingPuyoInterval = 1000;
+const fixedPuyosInterval = 500;
 
 interface GameStateContextValue {
   state: GameState;
@@ -93,15 +97,20 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
 
   useEffect(() => {
     if (state.gameStatus === "running") {
-      const intervalId = setInterval(() => {
-        setState((prevState) => updateBoardOnCollision(prevState));
-      }, 1000);
+      const updateFallingPuyoTimer = setInterval(() => {
+        setState((prevState) => updateFallingPuyo(prevState));
+      }, fallingPuyoInterval);
+
+      const updateFixedPuyosTimer = setInterval(() => {
+        setState((prevState) => updateFixedPuyos(prevState));
+      }, fixedPuyosInterval);
 
       return () => {
-        clearInterval(intervalId);
+        clearInterval(updateFallingPuyoTimer);
+        clearInterval(updateFixedPuyosTimer);
       };
     }
-  }, [state.gameStatus, setState]);
+  }, [state.gameStatus]);
 
   return (
     <GameStateContext.Provider
