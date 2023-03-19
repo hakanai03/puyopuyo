@@ -8,15 +8,12 @@ import React, {
 } from "react";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { GameState } from "../../types/GameState";
-import { Puyo } from "../../types/Puyo";
 import {
-  cloneBoard,
   Direction,
-  dropPuyosOnBoard,
   makePuyoPuyo,
   movePuyoPuyo,
-  removeConnectedPuyos,
   rotatePuyoPuyo,
+  updateBoardOnCollision,
 } from "../algorithms";
 
 interface GameStateContextValue {
@@ -26,7 +23,6 @@ interface GameStateContextValue {
   resetGame: () => void;
   moveCurrentPuyo: (direction: Direction) => void;
   rotateCurrentPuyo: () => void;
-  updateBoardOnCollision: () => void;
 }
 
 const GameStateContext = createContext<GameStateContextValue | undefined>(
@@ -95,92 +91,10 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
     });
   }, [setState]);
 
-  const updateBoardOnCollision = () => {
-    setState((prevState) => {
-      const { chainStep } = prevState;
-
-      if (chainStep === "none") {
-        const newPuyoPuyo = movePuyoPuyo(
-          prevState.currentPuyoPuyo,
-          prevState.fixedBoard,
-          "down"
-        );
-
-        if (newPuyoPuyo === prevState.currentPuyoPuyo) {
-          const newBoard = prevState.fixedBoard.map((row) => [...row]);
-
-          [
-            newPuyoPuyo.topLeft,
-            newPuyoPuyo.topRight,
-            newPuyoPuyo.bottomLeft,
-            newPuyoPuyo.bottomRight,
-          ]
-            .filter((puyo) => !puyo.isPlaceholder)
-            .forEach((puyo) => {
-              const p = puyo as Puyo;
-              newBoard[p.y][p.x] = puyo;
-            });
-
-          return { ...prevState, fixedBoard: newBoard, chainStep: "drop" };
-        } else {
-          // Clear previous positions of the moving PuyoPuyo
-          const clearedBoard = prevState.fixedBoard.map((row) => [...row]);
-          [
-            prevState.currentPuyoPuyo.topLeft,
-            prevState.currentPuyoPuyo.topRight,
-            prevState.currentPuyoPuyo.bottomLeft,
-            prevState.currentPuyoPuyo.bottomRight,
-          ]
-            .filter((puyo) => !puyo.isPlaceholder)
-            .forEach((puyo) => {
-              const p = puyo as Puyo;
-              clearedBoard[p.y][p.x] = undefined;
-            });
-
-          return {
-            ...prevState,
-            currentPuyoPuyo: newPuyoPuyo,
-            fixedBoard: clearedBoard,
-          };
-        }
-      }
-
-      if (chainStep === "drop") {
-        const droppedBoard = dropPuyosOnBoard(prevState.fixedBoard);
-        if (droppedBoard !== prevState.fixedBoard) {
-          return {
-            ...prevState,
-            fixedBoard: droppedBoard,
-            chainStep: "remove",
-          };
-        }
-      }
-
-      if (chainStep === "remove") {
-        const { updatedBoard, removedPuyos } = removeConnectedPuyos(
-          prevState.fixedBoard
-        );
-        if (removedPuyos) {
-          return { ...prevState, fixedBoard: updatedBoard, chainStep: "drop" };
-        } else {
-          return {
-            ...prevState,
-            fixedBoard: updatedBoard,
-            currentPuyoPuyo: prevState.nextPuyoPuyo,
-            nextPuyoPuyo: makePuyoPuyo(prevState.level),
-            chainStep: "none",
-          };
-        }
-      }
-
-      return prevState;
-    });
-  };
-
   useEffect(() => {
     if (state.gameStatus === "running") {
       const intervalId = setInterval(() => {
-        updateBoardOnCollision();
+        setState((prevState) => updateBoardOnCollision(prevState));
       }, 1000);
 
       return () => {
@@ -198,7 +112,6 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
         resetGame,
         moveCurrentPuyo,
         rotateCurrentPuyo,
-        updateBoardOnCollision,
       }}
     >
       {children}

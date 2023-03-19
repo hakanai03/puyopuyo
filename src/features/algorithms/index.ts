@@ -5,3 +5,4 @@ export * from "./rotatePuyoPuyo";
 export * from "./dropPuyosOnBoard";
 export * from "./removeConnectedPuyos";
 export * from "./cloneBoard"
+export * from "./updateOnCollision"
