@@ -2,8 +2,7 @@ import { BOARD_WIDTH } from "../../config";
 import { Color } from "../../types/Color";
 import { Puyo } from "../../types/Puyo";
 import { PuyoPuyo } from "../../types/PuyoPuyo";
-
-const colors: Color[] = ["red", "green", "blue", "yellow", "purple"];
+import {getAvailableColors} from "./getAvailableColors";
 
 const createPuyo = (
   x: number,
@@ -20,7 +19,7 @@ const createPuyo = (
 };
 
 export const makePuyoPuyo = (level: number): PuyoPuyo => {
-  const availableColors = colors.slice(0, level + 2);
+  const availableColors = getAvailableColors(level)
 
   const color1 = availableColors[Math.floor(Math.random() * availableColors.length)];
   const color2 = availableColors[Math.floor(Math.random() * availableColors.length)];

@@ -9,7 +9,9 @@ import React, {
 import { BOARD_HEIGHT, BOARD_WIDTH } from "../../config";
 import { GameState } from "../../types/GameState";
 import {
+  changePuyoPuyoColor,
   Direction,
+  isPuyoPuyoSquareShape,
   makePuyoPuyo,
   movePuyoPuyo,
   rotatePuyoPuyo,
@@ -87,13 +89,21 @@ export const GameStateProvider: React.FC<{ children?: ReactNode }> = ({
 
   const rotateCurrentPuyo = useCallback(() => {
     setState((prevState) => {
+      if (isPuyoPuyoSquareShape(prevState.currentPuyoPuyo)) {
+        const newPuyoPuyo = changePuyoPuyoColor(
+          prevState.currentPuyoPuyo,
+          prevState.level
+        );
+        return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
+      }
+
       const newPuyoPuyo = rotatePuyoPuyo(
         prevState.currentPuyoPuyo,
         prevState.fixedBoard
       );
       return { ...prevState, currentPuyoPuyo: newPuyoPuyo };
     });
-  }, [setState]);
+  }, []);
 
   useEffect(() => {
     if (state.gameStatus === "running") {
