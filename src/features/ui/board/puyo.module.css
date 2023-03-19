@@ -1,0 +1,14 @@
+@keyframes falling {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(100% + 2px));
+  }
+}
+
+.falling {
+  animation-name: falling;
+  animation-timing-function: linear;
+}
+
